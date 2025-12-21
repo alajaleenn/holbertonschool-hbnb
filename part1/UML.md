@@ -1,3 +1,4 @@
+```mermaid
 classDiagram
     class PresentationLayer {
         <<Interface>>
@@ -5,19 +6,12 @@ classDiagram
         +handleRequests()
     }
 
-    class HBnBFacade {
-        <<Facade>>
-        +createUser()
-        +createPlace()
-        +createReview()
-        +getUser()
-    }
-
     class BusinessLogicLayer {
         +User
         +Place
         +Review
         +Amenity
+        +FacadeService
         +processLogic()
     }
 
@@ -27,6 +21,6 @@ classDiagram
         +retrieveData()
     }
 
-    PresentationLayer --> HBnBFacade : uses
-    HBnBFacade --> BusinessLogicLayer : coordinates
-    BusinessLogicLayer --> PersistenceLayer : CRUD operations
+    PresentationLayer --> BusinessLogicLayer : Facade Pattern
+    BusinessLogicLayer --> PersistenceLayer : Database Operations
+```
