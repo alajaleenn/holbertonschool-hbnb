@@ -1,18 +1,76 @@
+from app.models.user import User
+from app.models.place import Place
+from app.models.review import Review
+from app.models.amenity import Amenity
 from app.persistence.repository import InMemoryRepository
 
+
 class HBnBFacade:
+  
+    
     def __init__(self):
+        """Initialize facade with repository."""
         self.repository = InMemoryRepository()
-
-    def create(self, obj):
-        self.repository.add(obj)
-        return obj
-
-    def get(self, obj_id):
-        return self.repository.get(obj_id)
-
-    def get_all(self):
-        return self.repository.get_all()
-
-    def delete(self, obj_id):
-        self.repository.delete(obj_id)
+    
+    # User methods
+    def create_user(self, user_data):
+        """Create a new user."""
+        user = User(**user_data)
+        self.repository.add(user)
+        return user
+    
+    def get_user(self, user_id):
+        """Get user by ID."""
+        return self.repository.get(user_id, 'User')
+    
+    def get_user_by_email(self, email):
+        """Get user by email."""
+        return self.repository.get_by_attribute('User', 'email', email)
+    
+    # Place methods
+    def create_place(self, place_data):
+        """Create a new place."""
+        place = Place(**place_data)
+        self.repository.add(place)
+        return place
+    
+    def get_place(self, place_id):
+        """Get place by ID."""
+        return self.repository.get(place_id, 'Place')
+    
+    # Review methods
+    def create_review(self, review_data):
+        """Create a new review."""
+        review = Review(**review_data)
+        self.repository.add(review)
+        
+        # Add review to place
+        place = self.get_place(review.place_id)
+        if place:
+            place.add_review(review.id)
+        
+        return review
+    
+    def get_review(self, review_id):
+        """Get review by ID."""
+        return self.repository.get(review_id, 'Review')
+    
+    def get_reviews_by_place(self, place_id):
+        """Get all reviews for a place."""
+        all_reviews = self.repository.get_all('Review')
+        return [r for r in all_reviews if r.place_id == place_id]
+    
+    def delete_review(self, review_id):
+        """Delete a review."""
+        return self.repository.delete(review_id, 'Review')
+    
+    # Amenity methods
+    def create_amenity(self, amenity_data):
+        """Create a new amenity."""
+        amenity = Amenity(**amenity_data)
+        self.repository.add(amenity)
+        return amenity
+    
+    def get_amenity(self, amenity_id):
+        """Get amenity by ID."""
+        return self.repository.get(amenity_id, 'Amenity')
