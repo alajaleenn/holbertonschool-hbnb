@@ -74,3 +74,10 @@ class HBnBFacade:
     def get_amenity(self, amenity_id):
         """Get amenity by ID."""
         return self.repository.get(amenity_id, 'Amenity')
+    def get_all_amenities(self):
+        """Get all amenities."""
+        return self.repository.get_all('Amenity')
+
+    def update_amenity(self, amenity_id, amenity_data):
+        """Update an amenity."""
+        return self.repository.update(amenity_id, 'Amenity', amenity_data)
