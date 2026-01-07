@@ -80,4 +80,20 @@ class HBnBFacade:
 
     def update_amenity(self, amenity_id, amenity_data):
         """Update an amenity."""
-        return self.repository.update(amenity_id, 'Amenity', amenity_data)
+       return self.repository.update(amenity_id, 'Amenity', amenity_data)
+   def get_all_places(self):
+        """Get all places."""
+        return self.repository.get_all('Place')
+
+    def add_amenity_to_place(self, place_id, amenity_id):
+        """Add an amenity to a place."""
+        place = self.get_place(place_id)
+        amenity = self.get_amenity(amenity_id)
+
+        if not place:
+            return None, 'Place not found'
+        if not amenity:
+            return None, 'Amenity not found'
+
+        place.add_amenity(amenity_id)
+        return place, None
