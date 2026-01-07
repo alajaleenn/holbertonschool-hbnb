@@ -2,12 +2,12 @@
 User API endpoints.
 """
 from flask_restx import Namespace, Resource, fields
-from app.services.facade import HBnBFacade
+from app.services import shared_facade
 
 api = Namespace('users', description='User operations')
 
-# Initialize facade
-facade = HBnBFacade()
+# Use shared facade
+facade = shared_facade
 
 # Define user model for API documentation
 user_model = api.model('User', {

@@ -2,12 +2,12 @@
 Place API endpoints.
 """
 from flask_restx import Namespace, Resource, fields
-from app.services.facade import HBnBFacade
+from app.services import shared_facade
 
 api = Namespace('places', description='Place operations')
 
-# Initialize facade
-facade = HBnBFacade()
+# Use shared facade
+facade = shared_facade
 
 # Define place model for API documentation
 place_model = api.model('Place', {
