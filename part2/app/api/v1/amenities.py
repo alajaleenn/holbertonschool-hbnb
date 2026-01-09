@@ -2,11 +2,11 @@
 Amenity API endpoints.
 """
 from flask_restx import Namespace, Resource, fields
-from app.services.facade import HBnBFacade
+from app.services import shared_facade
 
 api = Namespace('amenities', description='Amenity operations')
 
-facade = HBnBFacade()
+facade = shared_facade
 
 amenity_model = api.model('Amenity', {
     'id': fields.String(readonly=True, description='Amenity ID'),

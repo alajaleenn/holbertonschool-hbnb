@@ -1,7 +1,7 @@
 """
-Services package.
+Services package initialization.
 """
 from app.services.facade import HBnBFacade
 
-# Create a single shared instance of the facade
+# Create a single shared facade instance
 shared_facade = HBnBFacade()

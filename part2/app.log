@@ -1,0 +1,17 @@
+nohup: ignoring input
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5003
+ * Running on http://10.42.89.207:5003
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 118-078-491
+127.0.0.1 - - [09/Jan/2026 23:28:58] "GET /api/v1/users/ HTTP/1.1" 200 -
+127.0.0.1 - - [09/Jan/2026 23:29:30] "[35m[1mPOST /api/v1/users/ HTTP/1.1[0m" 201 -
+127.0.0.1 - - [09/Jan/2026 23:29:47] "[35m[1mPOST /api/v1/places/ HTTP/1.1[0m" 201 -
+127.0.0.1 - - [09/Jan/2026 23:30:04] "[35m[1mPOST /api/v1/reviews/ HTTP/1.1[0m" 201 -
+127.0.0.1 - - [09/Jan/2026 23:30:43] "[35m[1mDELETE /api/v1/reviews/de4feb9a-04b5-4b57-a8b0-78f0780a3d1b HTTP/1.1[0m" 204 -
+127.0.0.1 - - [09/Jan/2026 23:30:47] "[33mGET /api/v1/reviews/de4feb9a-04b5-4b57-a8b0-78f0780a3d1b HTTP/1.1[0m" 404 -

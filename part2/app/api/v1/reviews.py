@@ -2,12 +2,12 @@
 Review API endpoints.
 """
 from flask_restx import Namespace, Resource, fields
-from app.services.facade import HBnBFacade
+from app.services import shared_facade
 
 api = Namespace('reviews', description='Review operations')
 
 # Initialize facade
-facade = HBnBFacade()
+facade = shared_facade
 
 # Define review model for API documentation
 review_model = api.model('Review', {
