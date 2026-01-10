@@ -105,7 +105,28 @@ class PlaceResource(Resource):
         # Validate longitude if provided
         if 'longitude' in place_data and not -180 <= place_data['longitude'] <= 180:
             return {'error': 'Longitude must be between -180 and 180'}, 400
-        
+
+
         # Update place
         updated_place = facade.repository.update(place_id, 'Place', place_data)
         return updated_place.to_dict(), 200
+
+
+@api.route('/<place_id>/reviews')
+@api.param('place_id', 'The place identifier')
+class PlaceReviewList(Resource):
+    """Place reviews endpoint."""
+
+    @api.doc('get_place_reviews')
+    @api.response(200, 'Success')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get all reviews for a specific place."""
+        # Check if place exists
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
+
+        # Get all reviews for this place
+        reviews = facade.get_reviews_by_place(place_id)
+        return [review.to_dict() for review in reviews], 200
