@@ -1,3 +1,6 @@
+"""
+Facade pattern implementation.
+"""
 from app.models.user import User
 from app.models.place import Place
 from app.models.review import Review
@@ -6,7 +9,9 @@ from app.persistence.repository import InMemoryRepository
 
 
 class HBnBFacade:
-  
+    """
+    Facade for the HBnB application.
+    """
     
     def __init__(self):
         """Initialize facade with repository."""
@@ -37,6 +42,10 @@ class HBnBFacade:
     def get_place(self, place_id):
         """Get place by ID."""
         return self.repository.get(place_id, 'Place')
+    
+    def get_all_places(self):
+        """Get all places."""
+        return self.repository.get_all('Place')
     
     # Review methods
     def create_review(self, review_data):
@@ -74,3 +83,24 @@ class HBnBFacade:
     def get_amenity(self, amenity_id):
         """Get amenity by ID."""
         return self.repository.get(amenity_id, 'Amenity')
+    
+    def get_all_amenities(self):
+        """Get all amenities."""
+        return self.repository.get_all('Amenity')
+    
+    def update_amenity(self, amenity_id, amenity_data):
+        """Update an amenity."""
+        return self.repository.update(amenity_id, 'Amenity', amenity_data)
+    
+    def add_amenity_to_place(self, place_id, amenity_id):
+        """Add an amenity to a place."""
+        place = self.get_place(place_id)
+        amenity = self.get_amenity(amenity_id)
+
+        if not place:
+            return {'error': 'Place not found'}, 404
+        if not amenity:
+            return {'error': 'Amenity not found'}, 404
+
+        place.add_amenity(amenity_id)
+        return place
