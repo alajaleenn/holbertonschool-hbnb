@@ -1,0 +1,13 @@
+{
+    "id": "b736a5b9-01f3-4312-9092-8c117ab85754",
+    "created_at": "2026-01-09T23:48:06.652233",
+    "updated_at": "2026-01-09T23:48:06.652236",
+    "title": "Test Place",
+    "description": "A test place",
+    "price": 100.0,
+    "latitude": 37.7749,
+    "longitude": -122.4194,
+    "owner_id": "c18269af-36eb-456b-835f-9fd9d6faa26f",
+    "reviews": [],
+    "amenities": []
+}
