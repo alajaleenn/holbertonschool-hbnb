@@ -1,16 +1,20 @@
+cat > app/models/amenity.py << 'EOF'
 """
-Amenity model.
+Amenity SQLAlchemy model.
 """
-from app.models.base_model import BaseModel
+from app.models.db import db, BaseModel
 
 
 class Amenity(BaseModel):
     """
-    Amenity class.
+    Amenity SQLAlchemy model.
     
     Attributes:
         name (str): Amenity name
     """
+    __tablename__ = 'amenities'
+    
+    name = db.Column(db.String(50), unique=True, nullable=False)
     
     def __init__(self, name):
         """Initialize an Amenity instance."""
@@ -31,5 +35,5 @@ class Amenity(BaseModel):
     def to_dict(self):
         """Convert Amenity to dictionary."""
         amenity_dict = super().to_dict()
-        amenity_dict['name'] = self.name
         return amenity_dict
+EOF

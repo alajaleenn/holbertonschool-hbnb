@@ -4,6 +4,7 @@ Flask application factory for HBnB.
 from flask import Flask
 from flask_restx import Api
 from flask_jwt_extended import JWTManager
+from app.models.db import db
 from config import config
 
 
@@ -21,6 +22,9 @@ def create_app(config_name='development'):
     
     # Load configuration from config object
     app.config.from_object(config[config_name])
+    
+    # Initialize SQLAlchemy
+    db.init_app(app)
     
     # Initialize JWT
     jwt = JWTManager(app)
@@ -46,5 +50,9 @@ def create_app(config_name='development'):
     api.add_namespace(places_ns, path='/api/v1/places')
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     api.add_namespace(auth_ns, path='/api/v1/auth')
+    
+    # Create tables
+    with app.app_context():
+        db.create_all()
     
     return app

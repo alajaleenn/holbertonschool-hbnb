@@ -1,25 +1,32 @@
+cat > app/models/review.py << 'EOF'
 """
-Review model.
+Review SQLAlchemy model.
 """
-from app.models.base_model import BaseModel
+from app.models.db import db, BaseModel
 
 
 class Review(BaseModel):
     """
-    Review class.
+    Review SQLAlchemy model.
     
     Attributes:
         text (str): Review text
         rating (int): Rating (1-5)
-        place_id (str): Place ID
-        user_id (str): User ID
+        place_id (str): Place ID (foreign key will be added later)
+        user_id (str): User ID (foreign key will be added later)
     """
+    __tablename__ = 'reviews'
+    
+    text = db.Column(db.Text, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    place_id = db.Column(db.String(36), nullable=False)  # Will become foreign key later
+    user_id = db.Column(db.String(36), nullable=False)   # Will become foreign key later
     
     def __init__(self, text, rating, place_id, user_id):
         """Initialize a Review instance."""
         super().__init__()
         
-        # Validate before setting
+        # Validate and set attributes
         self.text = self.validate_text(text)
         self.rating = self.validate_rating(rating)
         self.place_id = place_id
@@ -52,8 +59,5 @@ class Review(BaseModel):
     def to_dict(self):
         """Convert Review to dictionary."""
         review_dict = super().to_dict()
-        review_dict['text'] = self.text
-        review_dict['rating'] = self.rating
-        review_dict['place_id'] = self.place_id
-        review_dict['user_id'] = self.user_id
         return review_dict
+EOF

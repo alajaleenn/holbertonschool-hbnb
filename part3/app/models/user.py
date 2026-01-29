@@ -1,13 +1,14 @@
+cat > app/models/user.py << 'EOF'
 """
-User model.
+User SQLAlchemy model.
 """
-from app.models.base_model import BaseModel
 import bcrypt
+from app.models.db import db, BaseModel
 
 
 class User(BaseModel):
     """
-    User class.
+    User SQLAlchemy model.
     
     Attributes:
         first_name (str): User's first name
@@ -16,6 +17,13 @@ class User(BaseModel):
         password (str): User's hashed password
         is_admin (bool): Admin status
     """
+    __tablename__ = 'users'
+    
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    password = db.Column(db.String(255), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
     
     def __init__(self, first_name, last_name, email, password, is_admin=False):
         """Initialize a User instance."""
@@ -37,9 +45,7 @@ class User(BaseModel):
     def to_dict(self):
         """Convert User to dictionary (excluding password)."""
         user_dict = super().to_dict()
-        user_dict['first_name'] = self.first_name
-        user_dict['last_name'] = self.last_name
-        user_dict['email'] = self.email
-        user_dict['is_admin'] = self.is_admin
-        # IMPORTANT: Never include password in the response
+        # Remove password from response
+        user_dict.pop('password', None)
         return user_dict
+EOF
