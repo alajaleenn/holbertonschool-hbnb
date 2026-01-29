@@ -3,6 +3,7 @@ cat > app/models/place.py << 'EOF'
 Place SQLAlchemy model.
 """
 from app.models.db import db, BaseModel
+from app.models import place_amenity
 
 
 class Place(BaseModel):
@@ -15,7 +16,6 @@ class Place(BaseModel):
         price (float): Price per night
         latitude (float): Latitude coordinate
         longitude (float): Longitude coordinate
-        owner_id (str): Owner's user ID (foreign key will be added later)
     """
     __tablename__ = 'places'
     
@@ -24,7 +24,14 @@ class Place(BaseModel):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
-    owner_id = db.Column(db.String(36), nullable=False)  # Will become foreign key later
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    
+    # Relationships
+    reviews = db.relationship('Review', backref='place', lazy=True,
+                            cascade='all, delete-orphan')
+    amenities = db.relationship('Amenity', secondary=place_amenity,
+                              backref=db.backref('places', lazy=True),
+                              lazy='subquery')
     
     def __init__(self, title, description, price, latitude, longitude, owner_id):
         """Initialize a Place instance."""
