@@ -76,6 +76,14 @@ class HBnBFacade:
     def delete_review(self, review_id):
         """Delete a review."""
         return self.repository.delete(review_id, 'Review')
+
+    def update_review(self, review_id, review_data):
+        """Update a review."""
+        return self.repository.update(review_id, 'Review', review_data)
+    
+    def get_all_reviews(self):
+        """Get all reviews."""
+        return self.repository.get_all('Review')
     
     # Amenity methods
     def create_amenity(self, amenity_data):
