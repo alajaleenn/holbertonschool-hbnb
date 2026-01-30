@@ -1,60 +1,96 @@
 """
-User model.
+User API endpoints.
 """
-from app.models.base_model import BaseModel
-import re
+from flask_restx import Namespace, Resource, fields
+from app.services import shared_facade
+
+api = Namespace('users', description='User operations')
+
+# Initialize facade
+facade = shared_facade
+
+# Define user model for API documentation
+user_model = api.model('User', {
+    'id': fields.String(readonly=True, description='User ID'),
+    'first_name': fields.String(required=True, description='First name'),
+    'last_name': fields.String(required=True, description='Last name'),
+    'email': fields.String(required=True, description='Email'),
+    'is_admin': fields.Boolean(description='Admin status'),
+    'created_at': fields.DateTime(readonly=True),
+    'updated_at': fields.DateTime(readonly=True)
+})
 
 
-class User(BaseModel):
-    """
-    User class.
+@api.route('/')
+class UserList(Resource):
+    """User list endpoint."""
     
-    Attributes:
-        first_name (str): User's first name
-        last_name (str): User's last name
-        email (str): User's email (unique)
-        is_admin (bool): Admin status
-    """
-    
-    def __init__(self, first_name, last_name, email, is_admin=False):
-        """Initialize a User instance."""
-        super().__init__()
+    @api.doc('create_user')
+    @api.expect(user_model)
+    @api.response(201, 'User created')
+    @api.response(400, 'Email already exists or validation error')
+    def post(self):
+        """Create a new user."""
+        user_data = api.payload
         
-        # Validate before setting
-        self.first_name = self.validate_name(first_name, "First name")
-        self.last_name = self.validate_name(last_name, "Last name")
-        self.email = self.validate_email(email)
-        self.is_admin = is_admin
-    
-    @staticmethod
-    def validate_name(name, field_name):
-        """Validate name fields."""
-        if not name or not isinstance(name, str):
-            raise ValueError(f"{field_name} is required and must be a string")
-        if len(name.strip()) == 0:
-            raise ValueError(f"{field_name} cannot be empty")
-        if len(name) > 50:
-            raise ValueError(f"{field_name} must be less than 50 characters")
-        return name.strip()
-    
-    @staticmethod
-    def validate_email(email):
-        """Validate email format."""
-        if not email or not isinstance(email, str):
-            raise ValueError("Email is required and must be a string")
+        # Check if email already exists
+        existing_user = facade.get_user_by_email(user_data.get('email', '').lower())
+        if existing_user:
+            return {'error': 'Email already registered'}, 400
         
-        # Simple email regex pattern
-        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-        if not re.match(email_pattern, email):
-            raise ValueError("Invalid email format")
-        
-        return email.lower().strip()
+        try:
+            new_user = facade.create_user(user_data)
+            return new_user.to_dict(), 201
+        except ValueError as e:
+            return {'error': str(e)}, 400
     
-    def to_dict(self):
-        """Convert User to dictionary."""
-        user_dict = super().to_dict()
-        user_dict['first_name'] = self.first_name
-        user_dict['last_name'] = self.last_name
-        user_dict['email'] = self.email
-        user_dict['is_admin'] = self.is_admin
-        return user_dict
+    @api.doc('list_users')
+    @api.marshal_list_with(user_model)
+    def get(self):
+        """Get all users."""
+        users = facade.get_all_users()
+        return [user.to_dict() for user in users], 200
+
+
+@api.route('/<user_id>')
+@api.param('user_id', 'The user identifier')
+class UserResource(Resource):
+    """User resource endpoint."""
+    
+    @api.doc('get_user')
+    @api.response(200, 'Success')
+    @api.response(404, 'User not found')
+    def get(self, user_id):
+        """Get a user by ID."""
+        user = facade.get_user(user_id)
+        if not user:
+            return {'error': 'User not found'}, 404
+        return user.to_dict(), 200
+    
+    @api.doc('update_user')
+    @api.expect(user_model)
+    @api.response(200, 'User updated')
+    @api.response(404, 'User not found')
+    @api.response(400, 'Email already registered or validation error')
+    def put(self, user_id):
+        """Update a user."""
+        user_data = api.payload
+        
+        # Check if user exists
+        user = facade.get_user(user_id)
+        if not user:
+            return {'error': 'User not found'}, 404
+        
+        # If email is being changed, check if new email already exists
+        if 'email' in user_data:
+            new_email = user_data['email'].lower()
+            if new_email != user.email:
+                existing_user = facade.get_user_by_email(new_email)
+                if existing_user:
+                    return {'error': 'Email already registered'}, 400
+        
+        try:
+            updated_user = facade.update_user(user_id, user_data)
+            return updated_user.to_dict(), 200
+        except ValueError as e:
+            return {'error': str(e)}, 400
