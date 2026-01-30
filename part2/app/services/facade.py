@@ -31,6 +31,14 @@ class HBnBFacade:
     def get_user_by_email(self, email):
         """Get user by email."""
         return self.repository.get_by_attribute('User', 'email', email)
+
+    def get_all_users(self):
+        """Get all users."""
+        return self.repository.get_all('User')
+    
+    def update_user(self, user_id, user_data):
+        """Update a user."""
+        return self.repository.update(user_id, 'User', user_data)
     
     # Place methods
     def create_place(self, place_data):
