@@ -46,6 +46,10 @@ class HBnBFacade:
     def get_all_places(self):
         """Get all places."""
         return self.repository.get_all('Place')
+
+    def update_place(self, place_id, place_data):
+        """Update a place."""
+        return self.repository.update(place_id, 'Place', place_data)
     
     # Review methods
     def create_review(self, review_data):
