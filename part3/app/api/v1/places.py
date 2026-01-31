@@ -1,138 +1,79 @@
 """
-Place API endpoints.
+Place API with admin bypass.
 """
 from flask_restx import Namespace, Resource, fields
-from app.services import shared_facade
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.services import shared_facade
 
 api = Namespace('places', description='Place operations')
 
-# Use shared facade
-facade = shared_facade
-
-# Define place model for API documentation
 place_model = api.model('Place', {
-    'id': fields.String(readonly=True, description='Place ID'),
-    'title': fields.String(required=True, description='Place title'),
-    'description': fields.String(required=True, description='Place description'),
-    'price': fields.Float(required=True, description='Price per night'),
-    'latitude': fields.Float(required=True, description='Latitude coordinate'),
-    'longitude': fields.Float(required=True, description='Longitude coordinate'),
-    'owner_id': fields.String(readonly=True, description='Owner user ID'),
-    'amenities': fields.List(fields.String, description='List of amenity IDs'),
-    'created_at': fields.DateTime(readonly=True),
-    'updated_at': fields.DateTime(readonly=True)
+    'id': fields.Integer(readonly=True),
+    'title': fields.String(required=True),
+    'description': fields.String(required=True),
+    'price': fields.Float(required=True),
+    'latitude': fields.Float(required=True),
+    'longitude': fields.Float(required=True),
+    'owner_id': fields.Integer(required=True)
 })
 
 
 @api.route('/')
 class PlaceList(Resource):
-    """Place list endpoint."""
     
-    @api.doc('create_place')
+    @api.doc('create_place', security='Bearer Auth')
     @api.expect(place_model)
-    @api.response(201, 'Place created')
-    @api.response(400, 'Validation error')
     @jwt_required()
     def post(self):
-        """Create a new place (requires authentication)."""
-        current_user_id = get_jwt_identity()
-        place_data = api.payload
+        """Create place."""
+        data = api.payload
         
-        # Set the owner to the authenticated user
-        place_data['owner_id'] = current_user_id
+        owner = shared_facade.get_user(data['owner_id'])
+        if not owner:
+            return {'error': 'Owner not found'}, 400
         
-        # Validate price (must be positive)
-        if place_data['price'] <= 0:
-            return {'error': 'Price must be positive'}, 400
-        
-        # Validate latitude (-90 to 90)
-        if not -90 <= place_data['latitude'] <= 90:
-            return {'error': 'Latitude must be between -90 and 90'}, 400
-        
-        # Validate longitude (-180 to 180)
-        if not -180 <= place_data['longitude'] <= 180:
-            return {'error': 'Longitude must be between -180 and 180'}, 400
-        
-        new_place = facade.create_place(place_data)
-        return new_place.to_dict(), 201
+        try:
+            place = shared_facade.create_place(data)
+            return place.to_dict(), 201
+        except Exception as e:
+            return {'error': str(e)}, 400
     
     @api.doc('list_places')
-    @api.marshal_list_with(place_model)
     def get(self):
-        """Get all places (public endpoint)."""
-        places = facade.repository.get_all('Place')
-        return [place.to_dict() for place in places], 200
+        """Get all places."""
+        places = shared_facade.get_all_places()
+        return [p.to_dict() for p in places], 200
 
 
-@api.route('/<place_id>')
-@api.param('place_id', 'The place identifier')
+@api.route('/<int:place_id>')
 class PlaceResource(Resource):
-    """Place resource endpoint."""
     
     @api.doc('get_place')
-    @api.response(200, 'Success')
-    @api.response(404, 'Place not found')
     def get(self, place_id):
-        """Get a place by ID (public endpoint)."""
-        place = facade.get_place(place_id)
+        """Get place by ID."""
+        place = shared_facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
         return place.to_dict(), 200
     
-    @api.doc('update_place')
+    @api.doc('update_place', security='Bearer Auth')
     @api.expect(place_model)
-    @api.response(200, 'Place updated')
-    @api.response(400, 'Validation error')
-    @api.response(403, 'Unauthorized action')
-    @api.response(404, 'Place not found')
     @jwt_required()
     def put(self, place_id):
-        """Update a place (only owner can update)."""
-        current_user_id = get_jwt_identity()
-        place_data = api.payload
+        """Update place (Admin can update any)."""
+        current_id = get_jwt_identity()
+        current_user = shared_facade.get_user(current_id)
         
-        # Check if place exists
-        place = facade.get_place(place_id)
+        place = shared_facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
         
-        # Check if user is the owner
-        if place.owner_id != current_user_id:
-            return {'error': 'Unauthorized action'}, 403
+        # Admin bypass
+        if not current_user.is_admin and place.owner_id != current_id:
+            return {'error': 'Unauthorized'}, 403
         
-        # Validate price if provided
-        if 'price' in place_data and place_data['price'] <= 0:
-            return {'error': 'Price must be positive'}, 400
-        
-        # Validate latitude if provided
-        if 'latitude' in place_data and not -90 <= place_data['latitude'] <= 90:
-            return {'error': 'Latitude must be between -90 and 90'}, 400
-        
-        # Validate longitude if provided
-        if 'longitude' in place_data and not -180 <= place_data['longitude'] <= 180:
-            return {'error': 'Longitude must be between -180 and 180'}, 400
-
-        # Update place
-        updated_place = facade.repository.update(place_id, 'Place', place_data)
-        return updated_place.to_dict(), 200
-
-
-@api.route('/<place_id>/reviews')
-@api.param('place_id', 'The place identifier')
-class PlaceReviewList(Resource):
-    """Place reviews endpoint."""
-
-    @api.doc('get_place_reviews')
-    @api.response(200, 'Success')
-    @api.response(404, 'Place not found')
-    def get(self, place_id):
-        """Get all reviews for a specific place (public endpoint)."""
-        # Check if place exists
-        place = facade.get_place(place_id)
-        if not place:
-            return {'error': 'Place not found'}, 404
-
-        # Get all reviews for this place
-        reviews = facade.get_reviews_by_place(place_id)
-        return [review.to_dict() for review in reviews], 200
+        try:
+            updated = shared_facade.update_place(place_id, api.payload)
+            return updated.to_dict(), 200
+        except Exception as e:
+            return {'error': str(e)}, 400
