@@ -1,5 +1,5 @@
 """
-Flask application factory for HBnB.
+Flask application factory.
 """
 from flask import Flask
 from flask_restx import Api
@@ -9,47 +9,45 @@ from config import config
 
 
 def create_app(config_name='development'):
-    """
-    Create and configure the Flask application.
-    
-    Args:
-        config_name: Configuration to use (development, production, etc.)
-    
-    Returns:
-        Flask application instance
-    """
+    """Create Flask app."""
     app = Flask(__name__)
-    
-    # Load configuration from config object
     app.config.from_object(config[config_name])
     
-    # Initialize SQLAlchemy
+    # Initialize extensions
     db.init_app(app)
-    
-    # Initialize JWT
     jwt = JWTManager(app)
     
-    # Initialize Flask-RESTX
+    # Initialize API
     api = Api(
         app,
         version='1.0',
         title='HBnB API',
         description='HBnB Application API',
-        doc='/api/v1/'
+        doc='/api/v1/',
+        authorizations={
+            'Bearer Auth': {
+                'type': 'apiKey',
+                'in': 'header',
+                'name': 'Authorization'
+            }
+        },
+        security='Bearer Auth'
     )
     
     # Register namespaces
+    from app.api.v1.auth import api as auth_ns
     from app.api.v1.users import api as users_ns
-    from app.api.v1.amenities import api as amenities_ns
     from app.api.v1.places import api as places_ns
     from app.api.v1.reviews import api as reviews_ns
-    from app.api.v1.auth import api as auth_ns
+    from app.api.v1.amenities import api as amenities_ns
+    from app.api.v1.admin import api as admin_ns
     
+    api.add_namespace(auth_ns, path='/api/v1/auth')
     api.add_namespace(users_ns, path='/api/v1/users')
-    api.add_namespace(amenities_ns, path='/api/v1/amenities')
     api.add_namespace(places_ns, path='/api/v1/places')
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
-    api.add_namespace(auth_ns, path='/api/v1/auth')
+    api.add_namespace(amenities_ns, path='/api/v1/amenities')
+    api.add_namespace(admin_ns, path='/api/v1/admin')
     
     # Create tables
     with app.app_context():
