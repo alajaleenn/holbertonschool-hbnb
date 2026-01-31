@@ -1,106 +1,94 @@
 """
-Facade pattern implementation.
+Facade with SQLAlchemy repositories.
 """
-from app.models.user import User
+from app.persistence.user_repository import UserRepository
+from app.persistence.repository_factory import RepositoryFactory
 from app.models.place import Place
 from app.models.review import Review
 from app.models.amenity import Amenity
-from app.persistence.repository import InMemoryRepository
 
 
 class HBnBFacade:
-    """
-    Facade for the HBnB application.
-    """
+    """Application facade."""
     
     def __init__(self):
-        """Initialize facade with repository."""
-        self.repository = InMemoryRepository()
+        """Initialize facade."""
+        self.user_repo = UserRepository()
+        self.repo_factory = RepositoryFactory
     
-    # User methods
-    def create_user(self, user_data):
-        """Create a new user."""
-        user = User(**user_data)
-        self.repository.add(user)
-        return user
+    def _get_repo(self, model_name: str):
+        """Get repository."""
+        return self.repo_factory.get_repository(model_name)
+    
+    # USER METHODS
+    def create_user(self, user_data: dict):
+        return self.user_repo.create(user_data)
     
     def get_user(self, user_id):
-        """Get user by ID."""
-        return self.repository.get(user_id, 'User')
+        return self.user_repo.get(user_id)
     
-    def get_user_by_email(self, email):
-        """Get user by email."""
-        return self.repository.get_by_attribute('User', 'email', email)
+    def get_user_by_email(self, email: str):
+        return self.user_repo.get_by_email(email)
     
-    # Place methods
-    def create_place(self, place_data):
-        """Create a new place."""
+    def get_all_users(self):
+        return self.user_repo.get_all()
+    
+    def update_user(self, user_id, data: dict):
+        return self.user_repo.update(user_id, data)
+    
+    def delete_user(self, user_id):
+        return self.user_repo.delete(user_id)
+    
+    def authenticate_user(self, email: str, password: str):
+        return self.user_repo.authenticate(email, password)
+    
+    # PLACE METHODS
+    def create_place(self, place_data: dict):
         place = Place(**place_data)
-        self.repository.add(place)
-        return place
+        return self._get_repo('Place').add(place)
     
     def get_place(self, place_id):
-        """Get place by ID."""
-        return self.repository.get(place_id, 'Place')
+        return self._get_repo('Place').get(place_id)
     
     def get_all_places(self):
-        """Get all places."""
-        return self.repository.get_all('Place')
+        return self._get_repo('Place').get_all()
     
-    # Review methods
-    def create_review(self, review_data):
-        """Create a new review."""
+    def update_place(self, place_id, data: dict):
+        return self._get_repo('Place').update(place_id, data)
+    
+    def delete_place(self, place_id):
+        return self._get_repo('Place').delete(place_id)
+    
+    # REVIEW METHODS
+    def create_review(self, review_data: dict):
         review = Review(**review_data)
-        self.repository.add(review)
-        
-        # Add review to place
-        place = self.get_place(review.place_id)
-        if place:
-            place.add_review(review.id)
-        
-        return review
+        return self._get_repo('Review').add(review)
     
     def get_review(self, review_id):
-        """Get review by ID."""
-        return self.repository.get(review_id, 'Review')
+        return self._get_repo('Review').get(review_id)
     
-    def get_reviews_by_place(self, place_id):
-        """Get all reviews for a place."""
-        all_reviews = self.repository.get_all('Review')
-        return [r for r in all_reviews if r.place_id == place_id]
+    def get_all_reviews(self):
+        return self._get_repo('Review').get_all()
+    
+    def update_review(self, review_id, data: dict):
+        return self._get_repo('Review').update(review_id, data)
     
     def delete_review(self, review_id):
-        """Delete a review."""
-        return self.repository.delete(review_id, 'Review')
+        return self._get_repo('Review').delete(review_id)
     
-    # Amenity methods
-    def create_amenity(self, amenity_data):
-        """Create a new amenity."""
+    def get_reviews_by_place(self, place_id):
+        return self._get_repo('Review').get_by_attribute('place_id', place_id)
+    
+    # AMENITY METHODS
+    def create_amenity(self, amenity_data: dict):
         amenity = Amenity(**amenity_data)
-        self.repository.add(amenity)
-        return amenity
+        return self._get_repo('Amenity').add(amenity)
     
     def get_amenity(self, amenity_id):
-        """Get amenity by ID."""
-        return self.repository.get(amenity_id, 'Amenity')
+        return self._get_repo('Amenity').get(amenity_id)
     
     def get_all_amenities(self):
-        """Get all amenities."""
-        return self.repository.get_all('Amenity')
+        return self._get_repo('Amenity').get_all()
     
-    def update_amenity(self, amenity_id, amenity_data):
-        """Update an amenity."""
-        return self.repository.update(amenity_id, 'Amenity', amenity_data)
-    
-    def add_amenity_to_place(self, place_id, amenity_id):
-        """Add an amenity to a place."""
-        place = self.get_place(place_id)
-        amenity = self.get_amenity(amenity_id)
-
-        if not place:
-            return {'error': 'Place not found'}, 404
-        if not amenity:
-            return {'error': 'Amenity not found'}, 404
-
-        place.add_amenity(amenity_id)
-        return place
+    def update_amenity(self, amenity_id, data: dict):
+        return self._get_repo('Amenity').update(amenity_id, data)
