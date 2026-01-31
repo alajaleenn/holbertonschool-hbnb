@@ -1,68 +1,64 @@
 """
-Amenity API endpoints.
+Amenity API with admin protection.
 """
 from flask_restx import Namespace, Resource, fields
+from flask_jwt_extended import jwt_required
 from app.services import shared_facade
+from app.utils.decorators import admin_required
 
 api = Namespace('amenities', description='Amenity operations')
 
-facade = shared_facade
-
 amenity_model = api.model('Amenity', {
-    'id': fields.String(readonly=True, description='Amenity ID'),
-    'name': fields.String(required=True, description='Amenity name'),
-    'created_at': fields.DateTime(readonly=True),
-    'updated_at': fields.DateTime(readonly=True)
+    'id': fields.Integer(readonly=True),
+    'name': fields.String(required=True)
 })
 
 
 @api.route('/')
 class AmenityList(Resource):
-    """Amenity list endpoint."""
     
-    @api.doc('create_amenity')
+    @api.doc('create_amenity', security='Bearer Auth')
     @api.expect(amenity_model)
-    @api.response(201, 'Amenity created')
+    @jwt_required()
+    @admin_required()
     def post(self):
-        """Create a new amenity."""
-        amenity_data = api.payload
-        new_amenity = facade.create_amenity(amenity_data)
-        return new_amenity.to_dict(), 201
+        """Create amenity (Admin only)."""
+        try:
+            amenity = shared_facade.create_amenity(api.payload)
+            return amenity.to_dict(), 201
+        except Exception as e:
+            return {'error': str(e)}, 400
     
     @api.doc('list_amenities')
-    @api.marshal_list_with(amenity_model)
     def get(self):
         """Get all amenities."""
-        amenities = facade.get_all_amenities()
-        return [amenity.to_dict() for amenity in amenities], 200
+        amenities = shared_facade.get_all_amenities()
+        return [a.to_dict() for a in amenities], 200
 
 
-@api.route('/<amenity_id>')
-@api.param('amenity_id', 'The amenity identifier')
+@api.route('/<int:amenity_id>')
 class AmenityResource(Resource):
-    """Amenity resource endpoint."""
     
     @api.doc('get_amenity')
-    @api.response(200, 'Success')
-    @api.response(404, 'Amenity not found')
     def get(self, amenity_id):
-        """Get an amenity by ID."""
-        amenity = facade.get_amenity(amenity_id)
+        """Get amenity by ID."""
+        amenity = shared_facade.get_amenity(amenity_id)
         if not amenity:
             return {'error': 'Amenity not found'}, 404
         return amenity.to_dict(), 200
     
-    @api.doc('update_amenity')
+    @api.doc('update_amenity', security='Bearer Auth')
     @api.expect(amenity_model)
-    @api.response(200, 'Amenity updated')
-    @api.response(404, 'Amenity not found')
+    @jwt_required()
+    @admin_required()
     def put(self, amenity_id):
-        """Update an amenity."""
-        amenity_data = api.payload
-        
-        amenity = facade.get_amenity(amenity_id)
+        """Update amenity (Admin only)."""
+        amenity = shared_facade.get_amenity(amenity_id)
         if not amenity:
             return {'error': 'Amenity not found'}, 404
         
-        updated_amenity = facade.update_amenity(amenity_id, amenity_data)
-        return updated_amenity.to_dict(), 200
+        try:
+            updated = shared_facade.update_amenity(amenity_id, api.payload)
+            return updated.to_dict(), 200
+        except Exception as e:
+            return {'error': str(e)}, 400
