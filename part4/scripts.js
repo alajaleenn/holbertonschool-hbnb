@@ -1,7 +1,5 @@
-// scripts.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Handle Login Form
     const loginForm = document.getElementById('login-form');
     
     if (loginForm) {
@@ -11,11 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Check authentication on page load
     checkAuthentication();
 });
 
-// Function to handle login
 async function handleLogin(event) {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -34,13 +30,10 @@ async function handleLogin(event) {
 
         if (response.ok) {
             const data = await response.json();
-            // Store token in cookie
             document.cookie = `token=${data.access_token}; path=/; max-age=3600`;
             
-            // Show success message
             alert('Login successful!');
             
-            // Redirect to index page
             window.location.href = 'index.html';
         } else {
             const errorData = await response.json();
@@ -52,7 +45,6 @@ async function handleLogin(event) {
     }
 }
 
-// Function to get cookie value by name
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -62,23 +54,19 @@ function getCookie(name) {
     return null;
 }
 
-// Function to check if user is authenticated
 function checkAuthentication() {
     const token = getCookie('token');
     const loginButton = document.querySelector('.login-button');
     
     if (token && loginButton) {
-        // User is logged in, change button to "Logout"
         loginButton.textContent = 'Logout';
         loginButton.href = '#';
         loginButton.addEventListener('click', handleLogout);
     }
 }
 
-// Function to handle logout
 function handleLogout(event) {
     event.preventDefault();
-    // Delete the token cookie
     document.cookie = 'token=; path=/; max-age=0';
     alert('Logged out successfully!');
     window.location.href = 'login.html';
