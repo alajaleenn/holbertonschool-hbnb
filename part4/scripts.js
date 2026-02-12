@@ -21,7 +21,7 @@ async function handleLogin(event) {
     const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/api/v1/login', {
+        const response = await fetch('http://127.0.0.1:5003/api/v1/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -89,7 +89,7 @@ function handleLogout(event) {
 
 async function fetchPlaces(token) {
     try {
-        const response = await fetch('http://127.0.0.1:5000/api/v1/places', {
+        const response = await fetch('http://127.0.0.1:5003/api/v1/places', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
