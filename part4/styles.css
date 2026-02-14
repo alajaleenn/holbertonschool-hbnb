@@ -11,7 +11,7 @@ body {
 }
 
 header {
-    background-color: #2c3e50;
+    background-color: #A2273B;
     color: white;
     padding: 15px;
     display: flex;
@@ -26,7 +26,7 @@ nav a {
 }
 
 .login-button {
-    background-color: #3498db;
+    background-color: #DF1C3C;
     padding: 8px 12px;
     border-radius: 5px;
 }
@@ -47,7 +47,7 @@ main {
     display: inline-block;
     margin-top: 10px;
     padding: 8px 12px;
-    background-color: #3498db;
+    background-color: #DF1C3C;
     color: white;
     text-decoration: none;
     border-radius: 5px;
@@ -72,7 +72,7 @@ form select {
 
 form button {
     padding: 8px;
-    background-color: #2ecc71;
+    background-color: #DF1C3C;
     color: white;
     border: none;
     border-radius: 5px;
@@ -82,7 +82,7 @@ form button {
 footer {
     text-align: center;
     padding: 15px;
-    background-color: #2c3e50;
+    background-color: #A2273B;
     color: white;
     margin-top: 30px;
 }
@@ -132,7 +132,7 @@ footer {
 }
 
 .place-card h2 {
-    color: #2c3e50;
+    color: #A2273B;
     margin: 10px 0;
 }
 
@@ -141,11 +141,12 @@ nav a:hover {
 }
 
 .login-button:hover {
-    background-color: #2980b9;
+    background-color: #DF1C3C;
+   
 }
 
 .details-button:hover {
-    background-color: #2980b9;
+    background-color: #DF1C3C;
 }
 
 @media (max-width: 768px) {
