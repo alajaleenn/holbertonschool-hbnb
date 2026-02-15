@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HBnB</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>HBnB Admin</h2>
+            </div>
+            <nav class="admin-nav">
+                <a href="index.html" class="active">Dashboard</a>
+                <a href="users.html">Users</a>
+                <a href="places.html">Places</a>
+                <a href="reviews.html">Reviews</a>
+                <a href="amenities.html">Amenities</a>
+                <a href="#" id="logout-btn" class="logout">Logout</a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Dashboard</h1>
+                <div class="user-info" id="admin-info"></div>
+            </header>
+            
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <p class="stat-number" id="total-users">-</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Places</h3>
+                    <p class="stat-number" id="total-places">-</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Reviews</h3>
+                    <p class="stat-number" id="total-reviews">-</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Amenities</h3>
+                    <p class="stat-number" id="total-amenities">-</p>
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <h2>Quick Actions</h2>
+                <div class="actions-grid">
+                    <a href="users.html" class="action-card">
+                        <h3>Manage Users</h3>
+                        <p>Create, edit, and delete user accounts</p>
+                    </a>
+                    <a href="places.html" class="action-card">
+                        <h3>Manage Places</h3>
+                        <p>Oversee all property listings</p>
+                    </a>
+                    <a href="reviews.html" class="action-card">
+                        <h3>Manage Reviews</h3>
+                        <p>Monitor and moderate user reviews</p>
+                    </a>
+                    <a href="amenities.html" class="action-card">
+                        <h3>Manage Amenities</h3>
+                        <p>Add and update available amenities</p>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="admin.js"></script>
+</body>
+</html>

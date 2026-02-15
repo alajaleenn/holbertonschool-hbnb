@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Places - HBnB Admin</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>HBnB Admin</h2>
+            </div>
+            <nav class="admin-nav">
+                <a href="index.html">Dashboard</a>
+                <a href="users.html">Users</a>
+                <a href="places.html" class="active">Places</a>
+                <a href="reviews.html">Reviews</a>
+                <a href="amenities.html">Amenities</a>
+                <a href="#" id="logout-btn" class="logout">Logout</a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Places Management</h1>
+            </header>
+            
+            <!-- Places Table -->
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Owner</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="places-table-body">
+                        <tr>
+                            <td colspan="6" class="loading">Loading places...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    
+    <script src="admin.js"></script>
+</body>
+</html>

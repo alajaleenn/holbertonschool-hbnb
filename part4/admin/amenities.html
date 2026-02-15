@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Amenities - HBnB Admin</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>HBnB Admin</h2>
+            </div>
+            <nav class="admin-nav">
+                <a href="index.html">Dashboard</a>
+                <a href="users.html">Users</a>
+                <a href="places.html">Places</a>
+                <a href="reviews.html">Reviews</a>
+                <a href="amenities.html" class="active">Amenities</a>
+                <a href="#" id="logout-btn" class="logout">Logout</a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>Amenities Management</h1>
+                <button class="btn-primary" onclick="showCreateAmenityModal()">+ Create Amenity</button>
+            </header>
+            
+            <!-- Amenities Table -->
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="amenities-table-body">
+                        <tr>
+                            <td colspan="4" class="loading">Loading amenities...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Create Amenity Modal -->
+    <div id="create-amenity-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Amenity</h2>
+                <button class="close-btn" onclick="closeCreateAmenityModal()">&times;</button>
+            </div>
+            <form id="create-amenity-form">
+                <div class="form-group">
+                    <label for="amenity_name">Amenity Name *</label>
+                    <input type="text" id="amenity_name" required placeholder="e.g., WiFi, Pool, Parking">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeCreateAmenityModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Create Amenity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="admin.js"></script>
+</body>
+</html>
