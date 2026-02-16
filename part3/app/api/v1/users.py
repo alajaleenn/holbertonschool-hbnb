@@ -54,7 +54,7 @@ class UserList(Resource):
     @jwt_required()
     def get(self):
         """Get all users (requires authentication)."""
-        users = facade.repository.get_all('User')
+        users = facade.get_all_users()
         return [user.to_dict() for user in users], 200
 
 
@@ -105,5 +105,5 @@ class UserResource(Resource):
             return {'error': 'Admin status cannot be modified'}, 400
         
         # Update user (only first_name and last_name allowed)
-        updated_user = facade.repository.update(user_id, 'User', user_data)
+        updated_user = facade.update_user(user_id, user_data)
         return updated_user.to_dict(), 200

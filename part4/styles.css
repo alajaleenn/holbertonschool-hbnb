@@ -1,4 +1,5 @@
-* {
+
+   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -8,174 +9,421 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     background-color: #f4f4f4;
     line-height: 1.6;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
+
+
 header {
-    background-color: #A2273B;
+    background: linear-gradient(135deg, #A2273B 0%, #DF1C3C 100%);
     color: white;
-    padding: 15px;
+    padding: 20px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
     width: 120px;
     height: auto;
+    transition: transform 0.3s;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 nav a {
     color: white;
     text-decoration: none;
-    margin-left: 15px;
-}
-
-.login-button {
-    background-color: #DF1C3C;
-    padding: 8px 12px;
+    font-weight: 500;
+    transition: all 0.3s;
+    padding: 8px 15px;
     border-radius: 5px;
 }
 
+nav a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.login-button {
+    background-color: white;
+    color: #A2273B;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.login-button:hover {
+    background-color: #f8f8f8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* ==================== MAIN CONTENT ==================== */
+
 main {
-    padding: 20px;
+    flex: 1;
+    padding: 40px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ==================== FILTER SECTION ==================== */
+
+.filter-section {
+    background-color: white;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.filter-section label {
+    font-weight: 600;
+    color: #A2273B;
+    font-size: 16px;
+}
+
+.filter-section select {
+    padding: 10px 15px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    background: white;
+    transition: all 0.3s;
+    min-width: 150px;
+}
+
+.filter-section select:focus {
+    outline: none;
+    border-color: #A2273B;
+}
+
+.filter-section select:hover {
+    border-color: #DF1C3C;
+}
+
+/* ==================== PLACES GRID ==================== */
+
+.places-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    padding: 20px 0;
 }
 
 .place-card {
     background-color: white;
-    margin: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
     border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+}
+
+.place-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(162, 39, 59, 0.15);
+    border-color: #A2273B;
+}
+
+.place-card-content {
+    padding: 20px;
+    flex: 1;
+}
+
+.place-card h2 {
+    color: #A2273B;
+    margin-bottom: 12px;
+    font-size: 22px;
+}
+
+.place-card p {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .details-button {
     display: inline-block;
-    margin-top: 10px;
-    padding: 8px 12px;
-    background-color: #DF1C3C;
+    width: 100%;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #DF1C3C 0%, #A2273B 100%);
     color: white;
     text-decoration: none;
     border-radius: 5px;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s;
+    margin-top: auto;
 }
+
+.details-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(162, 39, 59, 0.3);
+}
+
+/* ==================== PLACE DETAILS PAGE ==================== */
+
+.place-details {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+}
+
+.place-details h1 {
+    color: #A2273B;
+    font-size: 32px;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #DF1C3C;
+    padding-bottom: 15px;
+}
+
+.place-info {
+    display: grid;
+    gap: 15px;
+}
+
+.place-info p {
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.place-info strong {
+    color: #A2273B;
+    font-weight: 600;
+}
+
+/* ==================== REVIEWS SECTION ==================== */
+
+#reviews-section {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+}
+
+#reviews-section h2 {
+    color: #A2273B;
+    font-size: 24px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #DF1C3C;
+    padding-bottom: 10px;
+}
+
+.review-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid #DF1C3C;
+    transition: all 0.3s;
+}
+
+.review-card:hover {
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transform: translateX(5px);
+}
+
+.review-card p {
+    margin-bottom: 8px;
+    color: #555;
+}
+
+/* ==================== FORMS ==================== */
 
 form {
     background-color: white;
     margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
+    padding: 30px;
     border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    max-width: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    max-width: 500px;
+}
+
+form h1 {
+    color: #A2273B;
+    margin-bottom: 25px;
+    font-size: 28px;
+    text-align: center;
 }
 
 form label {
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
     font-size: 14px;
 }
 
 form input,
 form textarea,
 form select {
-    margin-bottom: 15px;
+    width: 100%;
+    margin-bottom: 20px;
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 2px solid #ddd;
     border-radius: 5px;
     font-size: 14px;
+    transition: border-color 0.3s;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-form input:focus {
+form input:focus,
+form textarea:focus,
+form select:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: #A2273B;
 }
 
 form button {
-    padding: 12px;
-    background-color: #DF1C3C;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #DF1C3C 0%, #A2273B 100%);
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
 }
 
 form button:hover {
-    background-color: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(162, 39, 59, 0.3);
 }
+
+/* ==================== LOGIN PAGE ==================== */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 160px);
+    padding: 40px 20px;
+}
+
+.login-form {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+}
+
+.login-form h1 {
+    color: #A2273B;
+    margin-bottom: 30px;
+    font-size: 28px;
+    text-align: center;
+}
+
+/* ==================== FOOTER ==================== */
 
 footer {
     text-align: center;
-    padding: 15px;
-    background-color: #A2273B;
+    padding: 20px;
+    background: linear-gradient(135deg, #A2273B 0%, #DF1C3C 100%);
     color: white;
-    margin-top: 30px;
+    margin-top: auto;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
 
+footer p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* ==================== ERROR MESSAGES ==================== */
+
 #error-message {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px;
-    border: 1px solid #f5c6cb;
+    background-color: #fee;
+    color: #c33;
+    padding: 15px;
+    border: 1px solid #fcc;
     border-radius: 5px;
     margin-top: 15px;
     text-align: center;
+    font-weight: 500;
 }
 
-.filter-section {
-    background-color: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+/* ==================== RESPONSIVE DESIGN ==================== */
 
-.filter-section label {
-    font-weight: bold;
-    color: #555;
-    margin-right: 10px;
-}
-
-.filter-section select {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.places-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
-}
-
-.place-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.place-card h2 {
-    color: #A2273B;
-    margin: 10px 0;
-}
-
-nav a:hover {
-    opacity: 0.8;
-}
-
-.login-button:hover {
-    background-color: #DF1C3C;
-}
-
-.details-button:hover {
-    background-color: #DF1C3C;
+@media (max-width: 1024px) {
+    .places-container {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
 }
 
 @media (max-width: 768px) {
+    header {
+        padding: 15px 20px;
+    }
+    
+    main {
+        padding: 30px 15px;
+    }
+    
     .places-container {
         grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-section select {
+        width: 100%;
+    }
+    
+    nav {
+        gap: 10px;
+    }
+    
+    nav a {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
 }
+
+@media (max-width: 480px) {
+    .place-card h2 {
+        font-size: 18px;
+    }
+    
+    .place-details h1 {
+        font-size: 24px;
+    }
+    
+    form {
+        padding: 20px;
+    }
 }

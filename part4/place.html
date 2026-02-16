@@ -12,46 +12,143 @@
     <img src="logo.png" alt="Application Logo" class="logo">
     <nav>
         <a href="index.html">Home</a>
-        <a href="login.html" class="login-button">Login</a>
+        <a href="login.html" id="login-link" class="login-button">Login</a>
     </nav>
 </header>
 
 <main>
+    <section class="place-details" id="place-details">
+        <p>Loading place details...</p>
+    </section>
 
-    <section class="place-details">
-        <h1>Cozy Beach House</h1>
-
-        <div class="place-info">
-            <p><strong>Host:</strong> John Doe</p>
-            <p><strong>Price:</strong> $120 per night</p>
-            <p><strong>Description:</strong> Beautiful beach house with ocean view.</p>
-            <p><strong>Amenities:</strong> WiFi, Air Conditioning, Kitchen, Parking</p>
+    <section id="reviews-section">
+        <h2>Reviews</h2>
+        <div id="reviews-list">
+            <p>Loading reviews...</p>
         </div>
     </section>
 
-    <section>
-        <h2>Reviews</h2>
-
-        <article class="review-card">
-            <p>"Amazing stay!"</p>
-            <p><strong>User:</strong> Alice</p>
-            <p><strong>Rating:</strong> 5/5</p>
-        </article>
-
-        <article class="review-card">
-            <p>"Very relaxing place."</p>
-            <p><strong>User:</strong> Bob</p>
-            <p><strong>Rating:</strong> 4/5</p>
-        </article>
-    </section>
-
-    <a href="add_review.html" class="details-button">Add Review</a>
-
+    <div id="add-review-section" style="display: none;">
+        <a href="#" id="add-review-btn" class="details-button">Add Review</a>
+    </div>
 </main>
 
 <footer>
     <p>All rights reserved.</p>
 </footer>
+
+<script>
+    // Get cookie helper
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            return parts.pop().split(';').shift();
+        }
+        return null;
+    }
+
+    // Get place ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const placeId = urlParams.get('id');
+
+    if (!placeId) {
+        document.getElementById('place-details').innerHTML = '<p>Invalid place ID</p>';
+    }
+
+    // Check authentication
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = getCookie('token');
+        const loginLink = document.getElementById('login-link');
+        
+        if (token) {
+            // User is logged in
+            loginLink.textContent = 'Logout';
+            loginLink.href = '#';
+            loginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.cookie = 'token=; path=/; max-age=0';
+                alert('Logged out successfully!');
+                window.location.href = 'index.html';
+            });
+            
+            // Show "Add Review" button
+            document.getElementById('add-review-section').style.display = 'block';
+            document.getElementById('add-review-btn').href = `add_review.html?id=${placeId}`;
+        }
+
+        // Load place details and reviews
+        loadPlaceDetails();
+        loadReviews();
+    });
+
+    // Load place details
+    async function loadPlaceDetails() {
+        try {
+            const response = await fetch(`http://127.0.0.1:5003/api/v1/places/${placeId}`);
+            
+            if (response.ok) {
+                const place = await response.json();
+                displayPlaceDetails(place);
+            } else {
+                document.getElementById('place-details').innerHTML = '<p>Place not found</p>';
+            }
+        } catch (error) {
+            console.error('Error loading place:', error);
+            document.getElementById('place-details').innerHTML = '<p>Error loading place details</p>';
+        }
+    }
+
+    // Display place details
+    function displayPlaceDetails(place) {
+        const detailsSection = document.getElementById('place-details');
+        detailsSection.innerHTML = `
+            <h1>${place.title}</h1>
+            <div class="place-info">
+                <p><strong>Price:</strong> $${place.price} per night</p>
+                <p><strong>Description:</strong> ${place.description}</p>
+                <p><strong>Location:</strong> ${place.latitude}, ${place.longitude}</p>
+            </div>
+        `;
+    }
+
+    // Load reviews - FIXED!
+    async function loadReviews() {
+        try {
+            const response = await fetch(`http://127.0.0.1:5003/api/v1/reviews/`);
+            
+            if (response.ok) {
+                const allReviews = await response.json();
+                // Filter reviews for this place
+                const placeReviews = allReviews.filter(review => review.place_id === placeId);
+                displayReviews(placeReviews);
+            } else {
+                document.getElementById('reviews-list').innerHTML = '<p>No reviews yet</p>';
+            }
+        } catch (error) {
+            console.error('Error loading reviews:', error);
+            document.getElementById('reviews-list').innerHTML = '<p>Error loading reviews</p>';
+        }
+    }
+
+    // Display reviews
+    function displayReviews(reviews) {
+        const reviewsList = document.getElementById('reviews-list');
+        
+        if (reviews.length === 0) {
+            reviewsList.innerHTML = '<p>No reviews yet. Be the first to review!</p>';
+            return;
+        }
+        
+        reviewsList.innerHTML = reviews.map(review => `
+            <article class="review-card">
+                <p>"${review.text}"</p>
+                <p><strong>Rating:</strong> ${review.rating}/5 ⭐</p>
+                <p><strong>Date:</strong> ${new Date(review.created_at).toLocaleDateString()}</p>
+            </article>
+        `).join('');
+    }
+</script>
 
 </body>
 </html>

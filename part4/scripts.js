@@ -14,6 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (priceFilter) {
         priceFilter.addEventListener('change', filterByPrice);
     }
+
+    // Load places on index page (public access)
+    const placesContainer = document.getElementById('places-list');
+    if (placesContainer) {
+        fetchPlaces();
+    }
 });
 
 async function handleLogin(event) {
@@ -21,7 +27,7 @@ async function handleLogin(event) {
     const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch('http://10.42.234.221:5003/api/v1/auth/login', {
+        const response = await fetch('http://127.0.0.1:5003/api/v1/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -66,13 +72,10 @@ function checkAuthentication() {
             loginLink.href = '#';
             loginLink.addEventListener('click', handleLogout);
         }
-        
-        const placesContainer = document.getElementById('places-list');
-        if (placesContainer) {
-            fetchPlaces(token);
-        }
     } else {
         if (loginLink) {
+            loginLink.textContent = 'Login';
+            loginLink.href = 'login.html';
             loginLink.style.display = 'block';
         }
     }
@@ -82,15 +85,14 @@ function handleLogout(event) {
     event.preventDefault();
     document.cookie = 'token=; path=/; max-age=0';
     alert('Logged out successfully!');
-    window.location.href = 'login.html';
+    window.location.href = 'index.html';
 }
 
-async function fetchPlaces(token) {
+async function fetchPlaces() {
     try {
-        const response = await fetch('http://10.42.234.221:5003/api/v1/places/', {
+        const response = await fetch('http://127.0.0.1:5003/api/v1/places/', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
@@ -98,10 +100,6 @@ async function fetchPlaces(token) {
         if (response.ok) {
             const places = await response.json();
             displayPlaces(places);
-        } else if (response.status === 401) {
-            alert('Session expired. Please login again.');
-            document.cookie = 'token=; path=/; max-age=0';
-            window.location.href = 'login.html';
         } else {
             alert('Failed to fetch places.');
         }
